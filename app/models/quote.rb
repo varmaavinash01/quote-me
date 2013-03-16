@@ -4,24 +4,24 @@ class Quote
       keys = REDIS.keys("quoteme:quote:*")
       quotes = []
       keys.each do |key|
-        quotes.push(ActiveSupport::JSON.decode(REDIS.get(key)))
-        Rails.logger.info ActiveSupport::JSON.decode(REDIS.get(key)).to_json
+        quotes.push(_read(key))
       end
       return quotes
     end
 
     def get(options)
+      # not used
       Rails.logger.info "in get" + options.inspect
       REDIS.get(create_key(options))
     end
 
     def save(quote)
-      Rails.logger.info "in save"
-      counter = REDIS.get("quoteme:quotecount").to_i + 1
-      key = "quoteme:quote:" + counter.to_s
+      Rails.logger.info "[M][Quote] in save"
+      counter = REDIS.incr("quoteme:quotecount")
+      key = "quote:" + counter.to_s
       quote["id"] = counter.to_s
-      REDIS.set("quoteme:quotecount", counter.to_s)
-      REDIS.set(key,quote.to_json)
+      #REDIS.set(key,quote.to_json)
+      _write(key,quote.to_json)
     end
 
     def action(params)
@@ -29,15 +29,15 @@ class Quote
       user_id = params["uid"]
       quote_id = params["id"]
       action = params["q_action"]
-      user = ActiveSupport::JSON.decode(REDIS.get("quoteme:user:" + user_id))
+      user = _read("user:" + user_id)
       user["stat"][action].push(quote_id) unless user["stat"][action].include? quote_id
-      REDIS.set("quoteme:user:" + user_id, user.to_json)
-      
-      quote = ActiveSupport::JSON.decode(REDIS.get("quoteme:quote:" + quote_id))
+      _write("user:" + user_id, user.to_json)
+
+      quote = _read("quote:" + quote_id)
       quote[action]["users"].push(user_id) unless quote[action]["users"].include? user_id
-      REDIS.set("quoteme:quote:" + quote_id, quote.to_json)
+      _write("quote:" + quote_id, quote.to_json)
       ret = {"status" => "ok"}
-      ret    
+      ret
     end
 
     def delete(quote)
@@ -48,6 +48,18 @@ class Quote
     def create_key(options)
       Rails.logger.info "create_key " + options[:email]
       return "quoteme:quote:" + options[:quote_id]
+    end
+
+    private
+
+    def _write(key, value)
+      key = "quoteme:" + key unless key.match("^quoteme:/*")
+      REDIS.set(key,value)
+    end
+
+    def _read(key)
+      key = "quoteme:" + key unless key.match("^quoteme:/*")
+      ActiveSupport::JSON.decode(REDIS.get(key))
     end
   end
 end

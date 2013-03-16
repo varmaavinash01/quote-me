@@ -65,7 +65,6 @@ profile_img_path = "http://graph.facebook.com/" + @user["info"]["id"]  + "/pictu
              url: "/quotes/" + qid,
              data: {
                     uid: uid,
-                    qid: "<%= @email_from %>",
                     q_action: action
                    }
     }).done(function(mesg){

@@ -17,7 +17,7 @@ class QuotesController < ApplicationController
   end
 
   def create
-    Rails.logger  .info "[C][Quotes] CREATE called with " + params.inspect
+    Rails.logger.info "[C][Quotes] CREATE called with " + params.inspect
     quote = {
                 "content"  => params[:content],
                 "author"   => params[:author],
