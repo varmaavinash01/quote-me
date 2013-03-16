@@ -1,4 +1,29 @@
 QuoteMe::Application.routes.draw do
+
+  get "users/quote_save"
+    
+  get "users/index"
+  
+  get "users/home"
+
+  get "users/login"
+
+  get "users/logout"
+
+  get "users/callback"
+
+  root :to => 'user#index'
+  
+  resources :quotes
+
+=begin  
+  match "/welcome" => "users#index" 
+  match "/login" => "users#login"
+  match "/home" => "users#home"
+  match "/logout" => "users#logout"
+  match "/callback" => "users#callback"
+=end  
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

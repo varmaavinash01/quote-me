@@ -1,0 +1,27 @@
+Contents : <input type="text" id="content" size="200" /> <br>
+Author   : <input type="text" id="author" size="200" /> <br>
+<a id ="save" href="#"> Save </a>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script>
+
+    
+    $("#save").click(function() {
+      var content = $("#content").val();
+      var author = $("#author").val();
+      console.log("content = " + content + "  Author = " + author);
+      $.ajax({
+               type: "POST",
+               url: "/quotes",
+               data: {
+                      content: content,
+                      author: author
+                     }
+      }).done(function(mesg){
+  
+      }).fail(function(){
+      });
+    });
+
+    </script>

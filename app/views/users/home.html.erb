@@ -1,0 +1,113 @@
+<div style="position:fixed;">
+<a href="/users/logout"> Logout </a> <br>
+Welcome <%= @user["info"]["name"] %> <br>
+<%
+profile_img_path = "http://graph.facebook.com/" + @user["info"]["id"]  + "/picture?type=square"
+%>
+<img src="<%= profile_img_path %>" alt="no image"/>
+<input type="hidden" id="uid" value="<%= @user["info"]["id"] %>">
+</div>
+<style>
+  .container {
+   vertical-align: top;
+   height: 100%;
+   #margin-top: 5%;
+   width: 90%;
+  }
+  
+  .action {
+   text-decoration: none;
+   cursor: pointer;
+  }
+  
+  .action-done {
+   color: red;
+  }
+</style>
+<div class="container">
+  <% @quotes.each do |quote| %>
+    <div class="quote">
+      <div class="quote-img-start">
+        <img height="50" width="150" src="http://www.decodeunicode.org/en/data/glyph/196x196/201C.gif" />
+      </div>
+      <div class="quote-content">
+        <b> <%= quote["content"] %> </b>
+        <div class="author">
+          --  <%= quote["author"] %>
+        </div>
+      </div>
+      <div class="quote-img-end">
+        <img height="100" width="150" src="http://www.decodeunicode.org/en/u+201d/data/glyph/196x196/201D.gif" />
+      </div>
+      <div class="quote-options" id="<%= quote["id"] %>">
+        <span class="action <%= 'action-done' if quote["agree"]["users"].include? @user["info"]["id"]%>" id="agree">Agree ( <%= quote["agree"]["users"].length %> )</span>
+        <span class="action" id="disagree">Disagree ( <%= quote["disagree"]["users"].length %> )</span>
+        <span class="action" id="whatever">Whatever ( <%= quote["whatever"]["users"].length %> )</span>
+        <span class="action" id="collect">Collect ( <%= quote["collect"]["users"].length %> )</span>
+      </div>  
+    </div>
+  <% end %>
+</div> <!-- container end -->
+<br><br><br>
+
+
+<script>
+  $(".action").click(function(){
+    console.log("action clicked");
+    console.log(this.id);
+    console.log($(this).closest('div').attr('id'));
+    uid = $("#uid").val();
+    qid = $(this).closest('div').attr('id');
+    action = this.id;
+    
+    $.ajax({
+             type: "PUT",
+             url: "/quotes/" + qid,
+             data: {
+                    uid: uid,
+                    qid: "<%= @email_from %>",
+                    q_action: action
+                   }
+    }).done(function(mesg){
+
+    }).fail(function(){
+    });
+    
+    
+  
+  });
+  </script>
+ 
+   <!-- $.ajax({
+             type: "GET",
+             url: "/reminderList",
+             data: {
+                    day: "<%=  DateTime.now.strftime("%A")  %>",
+                    email: "<%= @email_from %>"
+                   }
+    }).done(function(mesg){
+
+      $("#reminder-register-form").fadeOut("fast");
+      $("#reminder-register-success").fadeIn("slow");
+
+    }).fail(function(){
+
+       $("#reminder-register-form").fadeOut("fast");
+
+       if (localStorage.fail_attempt === "1") {
+
+        localStorage.fail_attempt = "0";
+        $("#reminder-register-fail").fadeOut("fast");;
+        $("#reminder-register-fail-manytimes").fadeIn("slow");
+
+      } else {
+
+        $("#reminder-register-fail").fadeIn("slow");
+        $("#reminder-register-fail-manytimes").fadeOut("fast");
+
+      }
+    });
+  });
+  
+  --!>
+
