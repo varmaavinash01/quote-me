@@ -1,13 +1,10 @@
-<div style="position:fixed;">
-<a href="/users/logout"> Logout </a> <br>
-Welcome <%= @user["info"]["name"] %> <br>
-<%
-profile_img_path = "http://graph.facebook.com/" + @user["info"]["id"]  + "/picture?type=square"
-%>
-<img src="<%= profile_img_path %>" alt="no image"/>
-<input type="hidden" id="uid" value="<%= @user["info"]["id"] %>">
-</div>
 <style>
+  .user-bar {
+    position:fixed;
+    width: 100%;
+    height: 7%;
+    #background-color: red;
+  }
   .container {
    vertical-align: top;
    height: 100%;
@@ -21,9 +18,45 @@ profile_img_path = "http://graph.facebook.com/" + @user["info"]["id"]  + "/pictu
   }
   
   .action-done {
-   color: red;
+    color: red;
+  }
+  
+  .profile-info {
+    margin-top: 5px;
+  }
+  
+  .user-bar {
+    text-align: left;
+    padding: 5px;
+  }
+  
+  .links {
+    text-align: right;
+    #display: inline;
+    margin-top: -50px;
+    margin-right: 5%;
+  }
+  
+  .profile-pic {
+    display: inline;
   }
 </style>
+<div class="user-bar">
+  <div class="profile-info">
+    <%
+       profile_img_path = "http://graph.facebook.com/" + @user["info"]["id"]  + "/picture?type=square"
+    %>
+    <div class="profile-pic">
+      <img src="<%= profile_img_path %>" alt="no image"/>
+    </div>  
+         Hi <%= @user["info"]["name"].split(' ')[0] %> 
+    
+  </div>
+  <div class="links">
+    My Collection |<br> <a href="/users/logout">Logout |</a>
+  </div>
+</div>
+ <input type="hidden" id="uid" value="<%= @user["info"]["id"] %>">
 <div class="container">
   <% @quotes.each do |quote| %>
     <div class="quote">
@@ -40,10 +73,10 @@ profile_img_path = "http://graph.facebook.com/" + @user["info"]["id"]  + "/pictu
         <img height="100" width="150" src="http://www.decodeunicode.org/en/u+201d/data/glyph/196x196/201D.gif" />
       </div>
       <div class="quote-options" id="<%= quote["id"] %>">
-        <span class="action <%= 'action-done' if quote["agree"]["users"].include? @user["info"]["id"]%>" id="agree">Agree ( <%= quote["agree"]["users"].length %> )</span>
-        <span class="action" id="disagree">Disagree ( <%= quote["disagree"]["users"].length %> )</span>
-        <span class="action" id="whatever">Whatever ( <%= quote["whatever"]["users"].length %> )</span>
-        <span class="action" id="collect">Collect ( <%= quote["collect"]["users"].length %> )</span>
+        <span class="action <%= 'action-done' if quote["agree"]["users"].include? @user["info"]["id"]%>" id="agree">Yes true in my case [ <%= quote["agree"]["users"].length %> ]</span>
+        <span class="action" id="disagree">What the F#ck [ <%= quote["disagree"]["users"].length %> ]</span>
+        <span class="action" id="whatever">Not form my planet [ <%= quote["whatever"]["users"].length %> ]</span>
+        <span class="action" id="collect">Dont wanna loose you [ <%= quote["collect"]["users"].length %> ]</span>
       </div>  
     </div>
   <% end %>
