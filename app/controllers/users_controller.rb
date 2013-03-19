@@ -8,7 +8,9 @@ class UsersController < ApplicationController
   end
   
   def home
-    @user = User.get(current_user)
+    #@user = User.get(current_user)
+    @user = current_user_id ? User.get_from_id(current_user_id) : User.get(current_user)
+    session[:user_id] = @user["info"]["id"]
     Rails.logger.info "[USER] = " + @user["info"]["id"]
     @quotes = Quote.get_all
     #post_on_fb
@@ -39,6 +41,10 @@ class UsersController < ApplicationController
   
   def current_user
     return session[:access_token]
+  end
+  
+  def current_user_id
+      return session[:user_id]
   end
   
   def post_on_fb

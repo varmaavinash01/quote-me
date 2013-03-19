@@ -16,6 +16,10 @@ class User
       end
       @user
     end
+    
+    def get_from_id(user_id)
+      @user = ActiveSupport::JSON.decode(REDIS.get("quoteme:user:" + @graph.get_object("me")["id"] ))
+    end
 
     def create_new(user)
       #Rails.logger.info "[M][create_new] called with user = " + user.to_json
