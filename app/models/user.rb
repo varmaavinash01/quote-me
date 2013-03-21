@@ -18,7 +18,7 @@ class User
     end
     
     def get_from_id(user_id)
-      @user = ActiveSupport::JSON.decode(REDIS.get("quoteme:user:" + @graph.get_object("me")["id"] ))
+      @user = ActiveSupport::JSON.decode(REDIS.get("quoteme:user:" + user_id ))
     end
 
     def create_new(user)
